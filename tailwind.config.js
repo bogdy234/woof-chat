@@ -3,7 +3,11 @@
 module.exports = {
   content: ["./app/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      backgroundImage: {
+        "dog-wallpaper": "url('public/dog-wallpaper.jpeg')",
+      },
+    },
   },
   plugins: [],
 };

@@ -1,3 +1,14 @@
 dbschema.json
 node_modules
 build
+var
+.env
+diagnostic.data
+.cache
+rs.sh
+setup.sh
+*.conf
+rs0
+rs1
+rs2
+journal

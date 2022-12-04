@@ -12,6 +12,8 @@
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
+    "sourceMap": true,
+    "outDir": "dist",
     "paths": {
       "~/*": ["./app/*"]
     },
