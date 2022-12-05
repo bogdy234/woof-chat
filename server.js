@@ -48,12 +48,14 @@ app.all(
 const port = process.env.PORT || 3000;
 
 io.on("connection", (socket) => {
+  console.log(`user connected ${socket.id}`);
+  const clients = io.sockets.sockets;
   socket.on("disconnect", () => {
     console.log(`${socket.id} user disconnected`);
   });
   socket.on("message", (data) => {
-    console.log(data);
-    socket.emit("response", data);
+    console.log("over here on the node server I received the message", data);
+    io.except(data.connectionId).emit("response", data.message);
   });
 });
 
