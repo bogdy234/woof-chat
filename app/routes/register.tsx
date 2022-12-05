@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { ActionFunction, json, redirect } from "@remix-run/node";
+import type { ActionFunction, MetaFunction } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 
 import Dropdown from "~/components/Dropdown";
@@ -17,6 +18,12 @@ const labelInputContainerStyle = "flex flex-col gap-1 text-gray-200";
 const inputStyle =
   "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const labelStyle = "text-gray-100";
+
+export const meta: MetaFunction = () => ({
+  charset: "utf-8",
+  title: "Register",
+  viewport: "width=device-width,initial-scale=1",
+});
 
 interface ActionData {
   formError?: string;

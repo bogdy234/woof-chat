@@ -1,13 +1,25 @@
-import { ActionFunction, json } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
+
+import { json, redirect } from "@remix-run/node";
+import { Form, useActionData, useSearchParams } from "@remix-run/react";
 import styles from "~/constants/styles";
-import { createUserSession, login } from "~/utils/session.server";
-import { validateNickname, validatePassword } from "~/utils/validate";
+import { createUserSession, getUserId, login } from "~/utils/session.server";
+import { validateNickname } from "~/utils/validate";
 
 const labelInputContainerStyle = "flex flex-col gap-1 text-gray-200";
 const inputStyle =
   "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const labelStyle = "text-gray-100";
+
+export const meta: MetaFunction = () => ({
+  charset: "utf-8",
+  title: "Login",
+  viewport: "width=device-width,initial-scale=1",
+});
 
 interface ActionData {
   formError?: string;
@@ -17,22 +29,44 @@ interface ActionData {
   fields?: {
     nickname: string;
     password: string;
+    redirectTo: string;
   };
 }
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+function validateUrl(url: any) {
+  let urls = ["/"];
+  if (urls.includes(url) || url.includes("/room/")) {
+    return url;
+  }
+  return "/";
+}
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (userId) {
+    throw redirect("/");
+  }
+  return null;
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
 
   const nickname = form.get("nickname");
   const password = form.get("password");
+  const redirectTo = validateUrl(form.get("redirectTo"));
 
-  if (typeof nickname !== "string" || typeof password !== "string") {
+  if (
+    typeof nickname !== "string" ||
+    typeof password !== "string" ||
+    typeof redirectTo !== "string"
+  ) {
     throw new Error("Invalid type.");
   }
 
-  const fields = { nickname, password };
+  const fields = { nickname, password, redirectTo };
   const fieldErrors = {
     nickname: validateNickname(nickname),
   };
@@ -48,11 +82,12 @@ export const action: ActionFunction = async ({ request }) => {
       formError: "Username and password does not match.",
     };
   }
-  return createUserSession(user.id, "/");
+  return createUserSession(user.id, redirectTo);
 };
 
 export default function Login() {
   const actionData = useActionData();
+  const [searchParams] = useSearchParams();
 
   console.log(actionData);
   return (
@@ -61,6 +96,11 @@ export default function Login() {
         className="w-11/12 sm:w-8/12 sm:h-5/12 bg-gray-500 p-10 rounded-lg max-w-md flex flex-col gap-3"
         method="post"
       >
+        <input
+          type="hidden"
+          name="redirectTo"
+          value={searchParams.get("redirectTo") ?? undefined}
+        />
         {actionData?.dogImage && <img src={actionData?.dogImage} alt="dog" />}
         <div className={labelInputContainerStyle}>
           <label htmlFor="nickname-input" className={labelStyle}>

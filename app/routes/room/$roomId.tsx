@@ -1,6 +1,12 @@
-import { json, LoaderFunction } from "@remix-run/node";
+import type { LoaderFunction, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getUser, requireUserId } from "~/utils/session.server";
+
+export const meta: MetaFunction<typeof loader> = ({ params }) => ({
+  charset: "utf-8",
+  title: `Room ${params.roomId}`,
+  viewport: "width=device-width,initial-scale=1",
+});
 
 export const loader: LoaderFunction = async ({ params, request }) => {
   await requireUserId(request);
