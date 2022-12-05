@@ -1,5 +1,5 @@
 import { ActionFunction, json } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
 import styles from "~/constants/styles";
 import { createUserSession, login } from "~/utils/session.server";
 import { validateNickname, validatePassword } from "~/utils/validate";
@@ -56,8 +56,8 @@ export default function Login() {
 
   console.log(actionData);
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center bg-dog-wallpaper">
-      <form
+    <div className="flex flex-col min-h-screen items-center justify-center">
+      <Form
         className="w-11/12 sm:w-8/12 sm:h-5/12 bg-gray-500 p-10 rounded-lg max-w-md flex flex-col gap-3"
         method="post"
       >
@@ -110,7 +110,7 @@ export default function Login() {
           </a>
           .
         </p>
-      </form>
+      </Form>
     </div>
   );
 }

@@ -11,11 +11,30 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  nickname     String   @unique
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  nickname     String    @unique
   passwordHash String
   breed        String
   dogImage     String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now())
+  Message      Message[]
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  userId    String   @db.ObjectId
+  from      User     @relation(fields: [userId], references: [id])
+  roomId    String?  @db.ObjectId
+  Room      Room?    @relation(fields: [roomId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Room {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now())
 }

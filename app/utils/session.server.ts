@@ -1,5 +1,6 @@
 import { db } from "./db.server";
 import bcrypt from "bcrypt";
+
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 
 interface LoginForm {
@@ -107,6 +108,7 @@ export async function getUser(request: Request) {
     const user = await db.user.findUnique({
       where: { id: userId },
     });
+    // TODO: fix ts error
     const userWithoutPassword = exclude(user, ["passwordHash"]);
     return userWithoutPassword;
   } catch {
