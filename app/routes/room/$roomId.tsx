@@ -3,7 +3,7 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { useFetcher, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { getUser, requireUserId } from "~/utils/session.server";
 import io from "socket.io-client";
 import { useEffect, useRef, useState } from "react";
@@ -30,7 +30,7 @@ export const loader: LoaderFunction = async ({
   messages: Message[];
 }> => {
   // validateRoomName (else -> redirect to /)
-  await requireUserId(request);
+  const userId = await requireUserId(request);
   const user = await getUser(request);
   if (!user) {
     throw new Error("No user found");
@@ -40,6 +40,11 @@ export const loader: LoaderFunction = async ({
   const dbMessages =
     (await db.message.findMany({
       where: { roomName: roomId },
+      orderBy: [
+        {
+          createdAt: "asc",
+        },
+      ],
     })) || [];
 
   const messages = dbMessages.map(async (m) => {
@@ -47,12 +52,12 @@ export const loader: LoaderFunction = async ({
     if (!dbUser) {
       throw new Error("No user found for messages");
     }
-    console.log(dbUser);
     return {
       ...m,
-      receivedMessage: m.userId !== user.id,
+      receivedMessage: dbUser.id !== userId,
       nickname: dbUser.nickname,
       dogImage: dbUser.dogImage,
+      roomId: m.roomName,
     };
   });
 
@@ -60,38 +65,43 @@ export const loader: LoaderFunction = async ({
     throw new Error("Room name not found");
   }
   const messagesData = await Promise.all([...messages]);
-  console.log("messages", messagesData);
   return { user, roomId, messages: messagesData };
 };
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
-  const data = Object.fromEntries(form);
-  const isValid = Object.values(data).every((v) => typeof v === "string");
-  if (!isValid) {
+  const content = form.get("content");
+  const userId = form.get("userId");
+  const roomId = form.get("roomId");
+
+  if (
+    typeof content !== "string" ||
+    typeof userId !== "string" ||
+    typeof roomId !== "string"
+  ) {
     throw new Error("Invalid data type");
   }
 
   await db.message.create({
     data: {
-      content: data.content,
-      userId: data.userId,
-      roomName: data.roomId,
+      content: content,
+      userId: userId,
+      roomName: roomId,
     },
   });
 
-  return data;
+  return null;
 };
 
 export default function RoomRoute() {
   const [messages, setMessages] = useState<Message[]>([]);
   const loaderData = useLoaderData();
   const messageInputRef = useRef<HTMLInputElement>(null);
-  const fetcher = useFetcher();
+  const chatRef = useRef<HTMLDivElement>(null);
 
   // handle receive messages
   useEffect(() => {
-    setMessages(loaderData.messages);
+    setMessages(loaderData?.messages || []);
     socket.on("response", function (data: Message) {
       if (!data) {
         return;
@@ -100,7 +110,7 @@ export default function RoomRoute() {
       setMessages((prev) => [...prev, newMessage]);
     });
 
-    socket.emit("join", { roomId: loaderData.roomId });
+    socket.emit("join", { roomId: loaderData?.roomId });
 
     // cleanup
     return () => {
@@ -108,8 +118,29 @@ export default function RoomRoute() {
     };
   }, []);
 
-  // handle send messages
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (!chatRef.current) {
+      return;
+    }
+    const handleScroll = () => {
+      console.log(chatRef.current?.scrollTop);
+      console.log("scrolled");
+      if (chatRef?.current?.scrollTop === 0) {
+        console.log("need to fetch more data");
+      }
+    };
+    chatRef.current.addEventListener("scroll", handleScroll);
+    return () => chatRef?.current?.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (messageInputRef.current === null) {
+      return;
+    }
+    messageInputRef.current.scrollIntoView();
+  }, [messageInputRef.current]);
+
+  const handleSendMessages = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const messageContent = messageInputRef.current?.value;
 
@@ -129,8 +160,6 @@ export default function RoomRoute() {
 
     setMessages((prev) => [...prev, newMessage]);
 
-    // make receivedMessage falsy
-    fetcher.submit({ ...newMessage, receivedMessage: "" }, { method: "post" });
     socket.emit("message", newMessage);
     messageInputRef.current!.value = "";
   };
@@ -140,8 +169,8 @@ export default function RoomRoute() {
       <div
         className="w-11/12 h-[80vh] sm:w-9/12 bg-gray-500 p-10 rounded-lg overflow-y-scroll
       "
+        ref={chatRef}
       >
-        <fetcher.Form method="post" />
         {messages.map((m) => (
           <MessageBubble
             src={m.dogImage}
@@ -151,20 +180,22 @@ export default function RoomRoute() {
             key={`message-${m.connectionId}-${m.content}-${Math.random()}`}
           />
         ))}
-        <form
-          onSubmit={handleSubmit}
+        <Form
+          method="post"
+          onSubmit={handleSendMessages}
           className="flex flex-col gap-2 items-center"
         >
           <input
             type="text"
             name="message"
             ref={messageInputRef}
-            className={`${styles.inputStyle} max-w-sm`}
+            className={`${styles.inputStyle} max-w-sm mt-4`}
+            placeholder="Type your message here"
           />
           <button type="submit" className={styles.buttonStyle}>
             Send message
           </button>
-        </form>
+        </Form>
       </div>
     </div>
   );

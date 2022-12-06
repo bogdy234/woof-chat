@@ -13,7 +13,6 @@ const MessageBubble: FC<MessageProps> = ({
   message,
   myMessage = true,
 }): ReactElement => {
-  console.log("nickname", nickname);
   return (
     <div>
       <div
