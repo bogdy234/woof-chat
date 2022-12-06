@@ -4,11 +4,12 @@
   "scripts": {
     "build": "npm run build:css && remix build",
     "build:css": "tailwindcss -m -i ./styles/app.css -o app/styles/app.css",
-    "dev": "concurrently \"npm run dev:css\" \"remix watch\" \"cross-env NODE_ENV=development nodemon server.js\"",
+    "exec": "ts-node server.ts",
+    "dev": "concurrently \"npm run dev:css\" \"remix watch\" \"cross-env NODE_ENV=development nodemon server.ts\"",
     "dev:css": "tailwindcss -w -i ./styles/app.css -o app/styles/app.css",
-    "dev:node": "cross-env NODE_ENV=development nodemon --require dotenv/config ./server.js --watch ./server.js",
+    "dev:node": "cross-env NODE_ENV=development nodemon --require dotenv/config ./server.ts --watch ./server.ts",
     "dev:remix": "remix watch",
-    "start": "cross-env NODE_ENV=production node ./server.js"
+    "start": "cross-env NODE_ENV=production node ./server.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.7.1",
@@ -24,7 +25,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "socket.io": "^4.5.4",
-    "socket.io-client": "^4.5.4"
+    "socket.io-client": "^4.5.4",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.8.0",

@@ -1,6 +1,14 @@
 {
-  "include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", "server/index.js"],
+  "include": [
+    "remix.env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "server/index.js",
+    "server.js"
+  ],
   "compilerOptions": {
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "lib": ["DOM", "DOM.Iterable", "ES2019"],
     "isolatedModules": true,
     "esModuleInterop": true,

@@ -1,3 +1,6 @@
+import { Socket } from "socket.io";
+import { Message } from "~/interfaces/message";
+
 const path = require("path");
 const express = require("express");
 const compression = require("compression");
@@ -32,7 +35,7 @@ app.use(morgan("tiny"));
 app.all(
   "*",
   process.env.NODE_ENV === "development"
-    ? (req, res, next) => {
+    ? (req: Request, res: Response, next: Function) => {
         purgeRequireCache();
 
         return createRequestHandler({
@@ -47,15 +50,36 @@ app.all(
 );
 const port = process.env.PORT || 3000;
 
-io.on("connection", (socket) => {
+io.on("connection", (socket: Socket) => {
   console.log(`user connected ${socket.id}`);
-  const clients = io.sockets.sockets;
+  // const clients = io.sockets.sockets;
+
   socket.on("disconnect", () => {
     console.log(`${socket.id} user disconnected`);
   });
-  socket.on("message", (data) => {
-    console.log("over here on the node server I received the message", data);
-    io.except(data.connectionId).emit("response", data.message);
+
+  socket.on(
+    "message",
+    ({
+      content,
+      userId,
+      roomId,
+      dogImage,
+      connectionId,
+      nickname,
+    }: Message) => {
+      io.to(roomId).except(connectionId).emit("response", {
+        content,
+        userId,
+        roomId,
+        dogImage,
+        nickname,
+      });
+    }
+  );
+
+  socket.on("join", (data: { roomId: string }) => {
+    socket.join(data.roomId);
   });
 });
 

@@ -15,8 +15,6 @@ import REGISTER from "~/constants/register";
 import styles from "~/constants/styles";
 
 const labelInputContainerStyle = "flex flex-col gap-1 text-gray-200";
-const inputStyle =
-  "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const labelStyle = "text-gray-100";
 
 export const meta: MetaFunction = () => ({
@@ -95,8 +93,6 @@ export default function Register() {
     setBreed(defaultBreed);
   }, []);
 
-  console.log(actionData);
-
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Form
@@ -111,7 +107,7 @@ export default function Register() {
             type="text"
             id="nickname-input"
             name="nickname"
-            className={inputStyle}
+            className={styles.inputStyle}
             aria-invalid={Boolean(actionData?.fieldErrors?.nickname)}
             defaultValue={actionData?.fields?.nickname}
           />
@@ -133,7 +129,7 @@ export default function Register() {
             type="password"
             id="password-input"
             name="password"
-            className={inputStyle}
+            className={styles.inputStyle}
             aria-invalid={Boolean(actionData?.fieldErrors?.password)}
             defaultValue={actionData?.fields?.password}
           />

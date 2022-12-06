@@ -11,8 +11,6 @@ import { createUserSession, getUserId, login } from "~/utils/session.server";
 import { validateNickname } from "~/utils/validate";
 
 const labelInputContainerStyle = "flex flex-col gap-1 text-gray-200";
-const inputStyle =
-  "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
 const labelStyle = "text-gray-100";
 
 export const meta: MetaFunction = () => ({
@@ -89,7 +87,6 @@ export default function Login() {
   const actionData = useActionData();
   const [searchParams] = useSearchParams();
 
-  console.log(actionData);
   return (
     <div className="flex flex-col min-h-screen items-center justify-center">
       <Form
@@ -110,7 +107,7 @@ export default function Login() {
             type="text"
             id="nickname-input"
             name="nickname"
-            className={inputStyle}
+            className={styles.inputStyle}
           />
           {actionData?.fieldErrors?.nickname ? (
             <p
@@ -130,7 +127,7 @@ export default function Login() {
             type="password"
             id="password-input"
             name="password"
-            className={inputStyle}
+            className={styles.inputStyle}
           />
         </div>
         <div id="form-error-message">
