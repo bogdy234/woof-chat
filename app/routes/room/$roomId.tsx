@@ -3,10 +3,10 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { Form, useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
+import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import { getUser, requireUserId } from "~/utils/session.server";
 import io from "socket.io-client";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import MessageBubble from "~/components/MessageBubble";
 import { Message } from "~/interfaces/message";
 import styles from "~/constants/styles";
@@ -139,7 +139,8 @@ export default function RoomRoute() {
     messageInputRef.current.scrollIntoView();
   }, [messageInputRef.current]);
 
-  const handleSendMessages = () => {
+  const handleSendMessages = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     const messageContent = messageInputRef.current?.value;
 
     if (!messageContent) {
@@ -166,8 +167,7 @@ export default function RoomRoute() {
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div
-        className="w-11/12 h-[80vh] sm:w-9/12 bg-gray-500 p-10 rounded-lg overflow-y-scroll flex flex-col gap-10
-      "
+        className="w-11/12 h-[80vh] sm:w-9/12 bg-gray-500 p-10 rounded-lg overflow-y-scroll flex flex-col gap-10 bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900"
         ref={chatRef}
       >
         {messages.map((m) => (

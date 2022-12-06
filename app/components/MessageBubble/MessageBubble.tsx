@@ -25,7 +25,7 @@ const MessageBubble: FC<MessageProps> = ({
         </div>
         <div className="flex flex-col w-48 sm:w-64">
           <h1 className="text-white">{nickname}</h1>
-          <h1 className="text-blue-300 bg-blue-700 p-4 rounded-lg break-all">
+          <h1 className="text-blue-100 bg-purple-900 p-4 rounded-lg break-all">
             {message}
           </h1>
         </div>
