@@ -3,7 +3,7 @@ import type {
   LoaderFunction,
   MetaFunction,
 } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useFetcher, useLoaderData, useSubmit } from "@remix-run/react";
 import { getUser, requireUserId } from "~/utils/session.server";
 import io from "socket.io-client";
 import { useEffect, useRef, useState } from "react";
@@ -98,6 +98,7 @@ export default function RoomRoute() {
   const loaderData = useLoaderData();
   const messageInputRef = useRef<HTMLInputElement>(null);
   const chatRef = useRef<HTMLDivElement>(null);
+  const fetcher = useFetcher();
 
   // handle receive messages
   useEffect(() => {
@@ -123,8 +124,6 @@ export default function RoomRoute() {
       return;
     }
     const handleScroll = () => {
-      console.log(chatRef.current?.scrollTop);
-      console.log("scrolled");
       if (chatRef?.current?.scrollTop === 0) {
         console.log("need to fetch more data");
       }
@@ -140,8 +139,7 @@ export default function RoomRoute() {
     messageInputRef.current.scrollIntoView();
   }, [messageInputRef.current]);
 
-  const handleSendMessages = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSendMessages = () => {
     const messageContent = messageInputRef.current?.value;
 
     if (!messageContent) {
@@ -159,6 +157,7 @@ export default function RoomRoute() {
     };
 
     setMessages((prev) => [...prev, newMessage]);
+    fetcher.submit({ ...newMessage, receivedMessage: "" }, { method: "post" });
 
     socket.emit("message", newMessage);
     messageInputRef.current!.value = "";
@@ -167,7 +166,7 @@ export default function RoomRoute() {
   return (
     <div className="flex justify-center items-center min-h-screen">
       <div
-        className="w-11/12 h-[80vh] sm:w-9/12 bg-gray-500 p-10 rounded-lg overflow-y-scroll
+        className="w-11/12 h-[80vh] sm:w-9/12 bg-gray-500 p-10 rounded-lg overflow-y-scroll flex flex-col gap-10
       "
         ref={chatRef}
       >
@@ -181,7 +180,6 @@ export default function RoomRoute() {
           />
         ))}
         <Form
-          method="post"
           onSubmit={handleSendMessages}
           className="flex flex-col gap-2 items-center"
         >

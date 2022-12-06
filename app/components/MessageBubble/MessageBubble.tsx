@@ -16,13 +16,19 @@ const MessageBubble: FC<MessageProps> = ({
   return (
     <div>
       <div
-        className={`flex gap-3 items-center ${
+        className={`flex gap-3 items-start ${
           myMessage ? "justify-end" : "justify-start"
         }`}
       >
-        <img src={src} alt="user-avatar" className="w-16 h-16 rounded-full" />
-        <h1 className="text-red-400">{message}</h1>
-        {nickname}
+        <div className="w-20">
+          <img src={src} alt="user-avatar" className="w-16 h-16 rounded-full" />
+        </div>
+        <div className="flex flex-col w-48 sm:w-64">
+          <h1 className="text-white">{nickname}</h1>
+          <h1 className="text-blue-300 bg-blue-700 p-4 rounded-lg break-all">
+            {message}
+          </h1>
+        </div>
       </div>
     </div>
   );
