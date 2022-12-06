@@ -23,18 +23,10 @@ model User {
 
 model Message {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  roomName  String
   content   String
   userId    String   @db.ObjectId
   from      User     @relation(fields: [userId], references: [id])
-  roomId    String?  @db.ObjectId
-  Room      Room?    @relation(fields: [roomId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-}
-
-model Room {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  messages  Message[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @default(now())
 }

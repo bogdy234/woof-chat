@@ -3,7 +3,7 @@ export interface Message {
   userId: string;
   roomId: string;
   receivedMessage: boolean;
-  connectionId: string;
+  connectionId?: string;
   nickname: string;
   dogImage: string;
 }
