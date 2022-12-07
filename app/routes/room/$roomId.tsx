@@ -193,10 +193,10 @@ export default function RoomRoute() {
             type="text"
             name="message"
             ref={messageInputRef}
-            className={`${styles.inputStyle} max-w-sm mt-4`}
+            className={`${styles.input} max-w-sm mt-4`}
             placeholder="Type your message here"
           />
-          <button type="submit" className={styles.buttonStyle}>
+          <button type="submit" className={styles.button}>
             Send message
           </button>
         </Form>

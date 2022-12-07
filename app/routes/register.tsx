@@ -119,7 +119,7 @@ export default function Register() {
             type="text"
             id="nickname-input"
             name="nickname"
-            className={styles.inputStyle}
+            className={styles.input}
             aria-invalid={Boolean(actionData?.fieldErrors?.nickname)}
             defaultValue={actionData?.fields?.nickname}
           />
@@ -141,7 +141,7 @@ export default function Register() {
             type="password"
             id="password-input"
             name="password"
-            className={styles.inputStyle}
+            className={styles.input}
             aria-invalid={Boolean(actionData?.fieldErrors?.password)}
             defaultValue={actionData?.fields?.password}
           />
@@ -178,7 +178,7 @@ export default function Register() {
           ) : null}
         </div>
         <div className="flex justify-center mt-2 mb-3">
-          <button className={styles.buttonStyle}>Register</button>
+          <button className={styles.button}>Register</button>
         </div>
         <p className="text-white">
           Already have an account? Login{" "}

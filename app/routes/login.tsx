@@ -107,7 +107,7 @@ export default function Login() {
             type="text"
             id="nickname-input"
             name="nickname"
-            className={styles.inputStyle}
+            className={styles.input}
           />
           {actionData?.fieldErrors?.nickname ? (
             <p
@@ -127,7 +127,7 @@ export default function Login() {
             type="password"
             id="password-input"
             name="password"
-            className={styles.inputStyle}
+            className={styles.input}
           />
         </div>
         <div id="form-error-message">
@@ -138,7 +138,7 @@ export default function Login() {
           ) : null}
         </div>
         <div className="flex justify-center mb-3">
-          <button className={styles.buttonStyle}>Login</button>
+          <button className={styles.button}>Login</button>
         </div>
         <p className="text-white">
           Don't have an account yet? Register{" "}
