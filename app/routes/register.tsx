@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import type { ActionFunction, MetaFunction } from "@remix-run/node";
+import type {
+  ActionFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 
@@ -10,7 +14,7 @@ import {
   validateNickname,
   validatePassword,
 } from "~/utils/validate";
-import { register } from "~/utils/session.server";
+import { getUserId, register } from "~/utils/session.server";
 import REGISTER from "~/constants/register";
 import styles from "~/constants/styles";
 
@@ -38,6 +42,14 @@ interface ActionData {
 }
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await getUserId(request);
+  if (userId) {
+    throw redirect("/");
+  }
+  return null;
+};
 
 export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();

@@ -1,7 +1,8 @@
-import type {
+import {
   ActionFunction,
   LoaderFunction,
   MetaFunction,
+  redirect,
 } from "@remix-run/node";
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
 import { getUser, requireUserId } from "~/utils/session.server";
@@ -12,6 +13,7 @@ import { Message } from "~/interfaces/message";
 import styles from "~/constants/styles";
 import User from "~/interfaces/user";
 import { db } from "~/utils/db.server";
+import { getBreeds } from "~/utils/data";
 
 const socket = io();
 
@@ -21,6 +23,8 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => ({
   viewport: "width=device-width,initial-scale=1",
 });
 
+const breedNames = Object.keys(getBreeds()).map((breed) => breed);
+
 export const loader: LoaderFunction = async ({
   params,
   request,
@@ -29,7 +33,9 @@ export const loader: LoaderFunction = async ({
   roomId: string;
   messages: Message[];
 }> => {
-  // validateRoomName (else -> redirect to /)
+  if (!breedNames.includes(params?.roomId || "")) {
+    throw redirect("/");
+  }
   const userId = await requireUserId(request);
   const user = await getUser(request);
   if (!user) {
