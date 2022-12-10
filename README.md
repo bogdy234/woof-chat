@@ -1,6 +1,6 @@
 # Chat app
 
-## Built with remix
+## Built with Remix
 
 ### ORM - Prisma
 
