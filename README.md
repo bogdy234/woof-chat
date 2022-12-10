@@ -1,3 +1,15 @@
+# Chat app
+
+## Built with remix
+
+### ORM - Prisma
+
+### DB - MongoDB
+
+### Socket.io
+
+### Typescript
+
 # Welcome to Remix!
 
 - [Remix Docs](https://remix.run/docs)
