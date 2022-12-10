@@ -10,6 +10,9 @@
 
 ### Typescript
 
+You can create an account with a nickname, password and choose a favorite dog's breed.
+After you login you can join a dog's breed room where you can chat with other pet lovers and share your experiences.
+
 # Welcome to Remix!
 
 - [Remix Docs](https://remix.run/docs)
